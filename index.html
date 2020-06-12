@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>My Portfolio</title>
+	<style type="text/css">
+		*{	background-image: url("background.jpg");
+		    background-repeat: no-repeat;
+            background-position: right top;
+            background-attachment: fixed;
+            background-size: cover;
+
+        }
+		.main {
+			width: 30%;
+			margin-left: 35%;
+			margin-top: 10%;
+			border: solid purple 2px;
+			text-align: center;
+		}
+	
+
+		ul li a{
+			float: left;
+		}
+	</style>
+</head>
+<body>
+	<div id="loading">
+		loading...
+	</div>
+
+    <div class="main" id="mainContainer" hidden>
+    	<br>
+	    <img 
+	    height="100"
+	    width="100"
+	    id="profileImage" 
+	    >
+	    <h2 id="fullName"></h2>
+	    <p id="bio"></p>
+	    <h5 id="followersInformation"></h5>
+	    <p>
+	    	Check me on <a id="githubLink">Github</a>
+	    </p>
+	    <h3>My Projects</h3>
+	    <ul id="repoList">
+	    	
+	    </ul>
+	    <br>
+
+	</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script type="text/javascript">
+		fetch("https://api.github.com/users/Pabitapun23")
+		    .then(response => response.json())
+		    .then(function(data){
+		    	let followersCount = data['followers']
+		    	let followersInfo = `I have been followed by ${followersCount} awesome people in Github`
+ 
+		    	document.getElementById('profileImage').src = data['avatar_url'];
+		    	document.getElementById('fullName').textContent = data['name'];
+		        document.getElementById('bio').textContent = data['bio'];
+		        document.getElementById('followersInformation').textContent = followersInfo;
+		        document.getElementById('githubLink').href = data['html_url'];					
+
+                $.ajax({
+				  url: data['repos_url'],
+				  jsonp: true,
+				  method: "GET",
+				  dataType: "json",
+				  success: function(res) {
+				  	console.log(res);
+				  	var ul = document.getElementById('repoList');
+
+				  	for (var i = res.length - 1; i >= 0; i--) {
+				  		var li = document.createElement('li');
+				  		var a = document.createElement('a');
+
+				  		a.appendChild(document.createTextNode(res[i]['name']));
+				  		a.setAttribute('href', "https://github.com/"+res[i]['full_name']);
+				  		a.setAttribute('target', '_blank');
+				  		li.appendChild(a);
+				  		ul.appendChild(li);
+
+				  	}
+				  }
+				});
+
+		        document.getElementById('mainContainer').hidden = false
+                document.getElementById('loading').hidden = true	    
+		    })
+		    
+
+	</script>
+	<script>
+		
+	</script>
+
+</body>
+</html>
